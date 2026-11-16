@@ -1,0 +1,9 @@
+# build output
+build/
+build-san/
+*.o
+campuscompute/shire
+campuscompute/p1test
+campuscompute/p2test
+# runtime output
+campuscompute.log

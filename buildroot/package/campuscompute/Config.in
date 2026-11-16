@@ -1,0 +1,10 @@
+config BR2_PACKAGE_CAMPUSCOMPUTE
+	bool "campuscompute (Shire Shell + CampusCompute)"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  Shire Shell with the CampusCompute job scheduler, producer-consumer
+	  logger, shared-memory IPC, Banker's algorithm, worker-process and
+	  resource-limit demos. Installs /usr/bin/shire.
+
+comment "campuscompute needs a toolchain with thread support"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

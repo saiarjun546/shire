@@ -1,0 +1,1 @@
+source "$BR2_EXTERNAL_SHIRE_PATH/package/campuscompute/Config.in"

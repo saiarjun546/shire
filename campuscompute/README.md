@@ -1,23 +1,45 @@
-# CampusCompute – Person 2 modules (FR3–FR7)
+# CampusCompute (Person 1: FR1, FR2, FR8 - Person 2: FR3–FR7)
 
-OS mechanisms for the CampusCompute mini-project (UE25CS242A):
-concurrent logger, shared-memory IPC, Banker's algorithm, worker failure
-detection and resource limits. Person 1 owns job management, scheduling
-and the shell (FR1, FR2, FR8).
+OS mechanisms for the CampusCompute mini-project (UE25CS242A).
+
+* **Person 1** - the Shire Shell (FR8), job management (FR1) and CPU
+  scheduling (FR2): `src/{main,shell,parser,builtins,jobs,scheduler}.c`.
+* **Person 2** - concurrent logger, shared-memory IPC, Banker's algorithm,
+  worker failure detection and resource limits (FR3-FR7), described below.
+
+See `../docs/DESIGN.md` for the Person 1 design and conventions.
 
 ## Prerequisites
-Ubuntu / WSL Ubuntu with `gcc` and `make`:
+Any Linux (Ubuntu, Kali, WSL) with `clang` (or `gcc`) and `make`. Buildroot is
+**not** needed to build or run CampusCompute:
 ```
-sudo apt install build-essential
+sudo apt install clang make          # or: build-essential
 ```
 
 ## Build, test, run
 ```
-make            # builds ./p2test (stand-alone driver for these modules)
-make test       # 25 automated checks, including invalid-input cases
-./p2test help   # list commands
-./p2test all    # run every demo + summary
+make            # builds ./shire (the shell) and ./p2test (Person 2 driver)
+make test       # unit tests + Person 2 tests + shell end-to-end tests
+make sanitize CC=gcc   # unit + shell tests under ASan/UBSan (see docs)
+make CC=gcc     # use GCC instead of the default Clang
+./shire       # start the shell (type 'help')
+./shire -c 'banker safe'   # run one command and exit
+./p2test help   # Person 2 stand-alone driver: list commands
+./p2test all    # run every Person 2 demo + summary
 ```
+
+## Shire Shell quick tour
+```
+shire> jobs add 1 0 5 2        # id arrival burst priority  (smaller = more urgent)
+shire> jobs add 2 1 3 1
+shire> jobs add 3 9 4 1
+shire> schedule fcfs           # also: schedule rr <quantum> | schedule priority
+shire> sysinfo
+shire> ls -l                   # any other command runs via fork/execvp/waitpid
+```
+Built-ins: `help clear pwd cd jobs schedule sysinfo version exit` plus the
+Person 2 commands `log ipc banker process limit` (see the integration table
+below).
 
 | Command | Requirement |
 |---|---|
@@ -55,8 +77,8 @@ make test       # 25 automated checks, including invalid-input cases
   The `RLIMIT_CPU` variant ends with `SIGXCPU`. `RLIMIT_CORE=0` stops it from writing a core file.
 
 ## Integration with Person 1's shell
-Include the headers and add `$(P2_OBJS)` to the shell's link line (the Makefile
-already defines it). Link with `-pthread -lrt`.
+Done: `src/builtins.c` calls these functions and `make` links `$(P2_OBJS)`
+into `shire` (link flags `-pthread -lrt -lm`).
 
 | Shell command (suggested) | Call | Returns |
 |---|---|---|
