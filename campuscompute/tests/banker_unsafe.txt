@@ -1,0 +1,13 @@
+# Unsafe state: 3 processes, 2 resource types.
+# P0 can finish, but afterwards neither P1 nor P2 can get its full Need.
+3 2
+# Available
+1 1
+# Maximum
+2 2
+6 4
+5 5
+# Allocation
+1 1
+2 1
+1 2

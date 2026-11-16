@@ -1,0 +1,10 @@
+# Invalid state: P1 holds more of R0 than its declared maximum.
+2 2
+# Available
+1 1
+# Maximum
+3 3
+2 2
+# Allocation
+1 1
+4 0
